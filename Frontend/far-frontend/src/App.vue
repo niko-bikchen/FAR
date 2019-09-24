@@ -1,7 +1,9 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <app-header></app-header>
-    <router-view></router-view>
+    <div class="container-fluid page-content">
+      <router-view></router-view>
+    </div>
     <app-footer></app-footer>
   </div>
 </template>
@@ -17,3 +19,13 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+body {
+  font-family: "Kodchasan";
+}
+
+.page-content {
+  height: 100vh;
+}
+</style>
