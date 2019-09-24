@@ -23,6 +23,7 @@
       </div>
       <div class="col-md-12 col-lg-6 offset-lg-3">
         <button class="btn btn-block btn-primary converter-body__convert-btn">CONVERT</button>
+        <button class="btn btn-block btn-primary converter-body__convert-btn">SWITCH</button>
       </div>
     </div>
   </div>
@@ -40,7 +41,7 @@ export default {
 </script>
 
 <style lang="scss">
-$mainColor: rgb(15, 139, 255);
+$mainColor: rgba(0, 57, 108, 1);
 
 .converter-body {
   &__contents {
@@ -88,6 +89,15 @@ $mainColor: rgb(15, 139, 255);
     background-color: $mainColor;
 
     border-color: $mainColor;
+  }
+
+  button {
+    height: 50px;
+
+    &hover {
+      background-color: rgb(15, 139, 255) 0%;
+      border-color: rgb(15, 139, 255) 0%;
+    }
   }
 }
 
