@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {
-      inputs: [],
+      translations: [],
       webtoken: "",
       email: "",
       name: ""
@@ -18,11 +18,11 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    SET_INPUTS(state, inputs) {
-      state.user.inputs = inputs.slice(0);
+    SET_TRANSLATIONS(state, translations) {
+      state.user.translations = translations.slice(0);
     },
-    ADD_INPUT(state, input) {
-      state.user.inputs.push(input);
+    ADD_TRANSLATION(state, translation) {
+      state.user.inputs.translations(translation);
     },
     SET_WEBTOKEN(state, webtoken) {
       state.user.webtoken = webtoken.slice(0);
@@ -32,12 +32,15 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addInput({ commit }, input) {
-      commit("ADD_INPUT", input);
+    addTranslation({ commit }, translation) {
+      commit("ADD_TRANSLATION", translation);
     },
-    signIn({ commit }, cred) {
-      console.log(cred);
-      commit("SET_USER", {});
+    fetchTranslations({ commit }, userData) {
+      console.log(userData);
+      commit("SET_TRANSLATIONS");
+    },
+    signIn({ commit }, userData) {
+      commit("SET_USER", { email: userData.email, name: userData.name });
     },
     signUp({ commit }, userData) {
       commit("SET_USER", { email: userData.email, name: userData.name });

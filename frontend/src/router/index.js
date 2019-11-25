@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Authorization from "../views/Authorization.vue";
+import Registration from "../views/Registration.vue";
 import Account from "../views/Account.vue";
 
 Vue.use(VueRouter);
@@ -16,6 +17,11 @@ const routes = [
     path: "/authorization",
     name: "authorization",
     component: Authorization
+  },
+  {
+    path: "/registration",
+    name: "registration",
+    component: Registration
   },
   {
     path: "/account",

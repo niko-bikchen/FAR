@@ -1,34 +1,77 @@
 <template>
-  <v-container fluid>
-    <v-row v-if="signIn">
-      <v-col cols="12">
-        <v-form v-model="user.email.valid">
-          <v-text-field
-            required
-            label="Email"
-            :rules="inputRules.email.rules"
-            v-model="user.email"
-          ></v-text-field>
-        </v-form>
-      </v-col>
-      <v-col cols="12">
-        <v-form v-model="user.password.valid">
-          <v-text-field
-            required
-            label="Password"
-            :rules="inputRules.password.rules"
-            v-model="user.password"
-          ></v-text-field>
-        </v-form>
+  <v-container>
+    <v-row>
+      <v-col cols="12" lg="6" offset-lg="3">
+        <v-card elevation="10" class="form">
+          <v-card-text>
+            <v-container fluid>
+              <v-row v-if="signIn" no-gutters>
+                <v-col cols="12" class="mb-6">
+                  <span class="headline text--primary">Welcome Back !</span>
+                </v-col>
+                <v-col cols="12">
+                  <v-form v-model="inputRules.email.valid">
+                    <v-text-field
+                      outlined
+                      required
+                      label="Email"
+                      type="email"
+                      :rules="inputRules.email.rules"
+                      v-model="user.email"
+                    ></v-text-field>
+                  </v-form>
+                </v-col>
+                <v-col cols="12">
+                  <v-form v-model="inputRules.password.valid">
+                    <v-text-field
+                      outlined
+                      required
+                      label="Password"
+                      type="password"
+                      :rules="inputRules.password.rules"
+                      v-model="user.password"
+                    ></v-text-field>
+                  </v-form>
+                </v-col>
+                <v-col cols="12">
+                  <span>First time here?</span>
+                  <v-btn text small color="primary" to="/registration"
+                    >Sign Up</v-btn
+                  >
+                </v-col>
+                <v-col cols="12">
+                  <v-container fluid>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-btn block color="primary" outlined to="/">
+                          Back
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-btn
+                          block
+                          color="primary"
+                          :disabled="
+                            !inputRules.password.valid ||
+                              !inputRules.email.valid
+                          "
+                        >
+                          Confirm
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
-    <app-sign-up v-else></app-sign-up>
   </v-container>
 </template>
 
 <script>
-import SignUp from "@/components/SignUp.vue";
-
 export default {
   data() {
     return {
@@ -61,9 +104,12 @@ export default {
         }
       }
     };
-  },
-  components: {
-    appSignUp: SignUp
   }
 };
 </script>
+
+<style lang="scss">
+.form {
+  border: 1px solid #1976d2 !important;
+}
+</style>

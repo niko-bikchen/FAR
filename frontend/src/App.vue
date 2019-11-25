@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <v-app-bar app flat class="header flow-r">
-      <v-toolbar-title>Far</v-toolbar-title>
+      <v-toolbar-title class="title"
+        >FAR | From Arabic to Roman numbers converter</v-toolbar-title
+      >
       <v-spacer></v-spacer>
       <v-btn to="/authorization">
         Sign In
@@ -10,7 +12,9 @@
 
     <v-content>
       <v-container fluid class="main">
-        <router-view></router-view>
+        <v-fade-transition mode="out-in">
+          <router-view></router-view>
+        </v-fade-transition>
       </v-container>
     </v-content>
 
@@ -54,5 +58,9 @@
   100% {
     background-position: 0% 50%;
   }
+}
+
+.title {
+  font-family: "Comfortaa", cursive;
 }
 </style>
