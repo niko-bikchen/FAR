@@ -1,9 +1,11 @@
 <template>
   <v-app>
     <v-app-bar app flat class="header flow-r">
-      <v-toolbar-title class="title"
-        >FAR | From Arabic to Roman numbers converter</v-toolbar-title
-      >
+      <v-toolbar-title class="title">
+        <router-link to="/" tag="span">
+          FAR | From Arabic to Roman numbers converter</router-link
+        >
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn to="/authorization">
         Sign In
@@ -62,5 +64,6 @@
 
 .title {
   font-family: "Comfortaa", cursive;
+  cursor: pointer;
 }
 </style>

@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12" lg="6" offset-lg="3">
-        <v-card elevation="10" class="form">
+        <v-card elevation="10" class="form" :loading="requestActive">
           <v-card-text>
             <v-container fluid>
               <v-row no-gutters>
@@ -10,7 +10,10 @@
                   <span class="headline text--primary">Nice to meet you !</span>
                 </v-col>
                 <v-col cols="6">
-                  <v-form v-model="inputRules.user_name.firstIsValid">
+                  <v-form
+                    v-model="inputRules.user_name.firstIsValid"
+                    v-on:submit.prevent
+                  >
                     <v-text-field
                       outlined
                       required
@@ -24,7 +27,10 @@
                   </v-form>
                 </v-col>
                 <v-col cols="6">
-                  <v-form v-model="inputRules.user_name.lastIsValid">
+                  <v-form
+                    v-model="inputRules.user_name.lastIsValid"
+                    v-on:submit.prevent
+                  >
                     <v-text-field
                       outlined
                       required
@@ -37,7 +43,7 @@
                   </v-form>
                 </v-col>
                 <v-col cols="12">
-                  <v-form v-model="inputRules.email.valid">
+                  <v-form v-model="inputRules.email.valid" v-on:submit.prevent>
                     <v-text-field
                       outlined
                       required
@@ -86,6 +92,12 @@
                 <v-col cols="12">
                   <v-container fluid>
                     <v-row>
+                      <v-col cols="12" v-if="requestFinishedNeg">
+                        <v-alert type="error">{{ requestDescription }}</v-alert>
+                      </v-col>
+                      <v-col cols="12" v-if="requestFailed">
+                        <v-alert type="error">{{ requestDescription }}</v-alert>
+                      </v-col>
                       <v-col cols="6">
                         <v-btn
                           block
@@ -97,7 +109,13 @@
                         </v-btn>
                       </v-col>
                       <v-col cols="6">
-                        <v-btn block color="primary" :disabled="formInvalid">
+                        <v-btn
+                          block
+                          color="primary"
+                          @click="signUp"
+                          :loading="requestActive"
+                          :disabled="formInvalid || requestActive"
+                        >
                           Confirm
                         </v-btn>
                       </v-col>
@@ -171,6 +189,30 @@ export default {
         !this.inputRules.user_name.lastIsValid ||
         !this.passwordIsValid
       );
+    },
+    requestActive() {
+      return this.$store.getters.getRequestDetails.active;
+    },
+    requestFinishedNeg() {
+      if (this.$store.getters.getRequestDetails.finished) {
+        return this.$store.getters.getRequestDetails.finished.neg;
+      }
+      return false;
+    },
+    requestFailed() {
+      return this.$store.getters.getRequestDetails.failed;
+    },
+    requestDescription() {
+      return this.$store.getters.getRequestDetails.description;
+    }
+  },
+  methods: {
+    signUp() {
+      this.$store.dispatch("signUp", {
+        email: this.user.email,
+        password: this.user.password,
+        name: `${this.user.name_first} ${this.user.name_last}`
+      });
     }
   }
 };

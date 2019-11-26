@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12" lg="6" offset-lg="3">
-        <v-card elevation="10" class="form">
+        <v-card elevation="10" class="form" :loading="requestActive">
           <v-card-text>
             <v-container fluid>
               <v-row v-if="signIn" no-gutters>
@@ -10,10 +10,11 @@
                   <span class="headline text--primary">Welcome Back !</span>
                 </v-col>
                 <v-col cols="12">
-                  <v-form v-model="inputRules.email.valid">
+                  <v-form v-model="inputRules.email.valid" v-on:submit.prevent>
                     <v-text-field
                       outlined
                       required
+                      autofocus
                       label="Email"
                       type="email"
                       :rules="inputRules.email.rules"
@@ -22,7 +23,10 @@
                   </v-form>
                 </v-col>
                 <v-col cols="12">
-                  <v-form v-model="inputRules.password.valid">
+                  <v-form
+                    v-model="inputRules.password.valid"
+                    v-on:submit.prevent
+                  >
                     <v-text-field
                       outlined
                       required
@@ -42,6 +46,12 @@
                 <v-col cols="12">
                   <v-container fluid>
                     <v-row>
+                      <v-col cols="12" v-if="requestFinishedNeg">
+                        <v-alert type="error">{{ requestDescription }}</v-alert>
+                      </v-col>
+                      <v-col cols="12" v-if="requestFailed">
+                        <v-alert type="error">{{ requestDescription }}</v-alert>
+                      </v-col>
                       <v-col cols="6">
                         <v-btn block color="primary" outlined to="/">
                           Back
@@ -51,10 +61,9 @@
                         <v-btn
                           block
                           color="primary"
-                          :disabled="
-                            !inputRules.password.valid ||
-                              !inputRules.email.valid
-                          "
+                          @click="signIn"
+                          :loading="requestActive"
+                          :disabled="inputInvalid || requestActive"
                         >
                           Confirm
                         </v-btn>
@@ -75,7 +84,6 @@
 export default {
   data() {
     return {
-      signIn: true,
       user: {
         email: "",
         password: ""
@@ -104,6 +112,34 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    inputInvalid() {
+      return !this.inputRules.password.valid || !this.inputRules.email.valid;
+    },
+    requestActive() {
+      return this.$store.getters.getRequestDetails.active;
+    },
+    requestFinishedNeg() {
+      if (this.$store.getters.getRequestDetails.finished) {
+        return this.$store.getters.getRequestDetails.finished.neg;
+      }
+      return false;
+    },
+    requestFailed() {
+      return this.$store.getters.getRequestDetails.failed;
+    },
+    requestDescription() {
+      return this.$store.getters.getRequestDetails.description;
+    }
+  },
+  methods: {
+    signIn() {
+      this.$store.dispatch("signIn", {
+        email: this.user.email,
+        password: this.user.password
+      });
+    }
   }
 };
 </script>
