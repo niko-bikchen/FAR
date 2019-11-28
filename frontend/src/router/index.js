@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Authorization from "../views/Authorization.vue";
 import Registration from "../views/Registration.vue";
-import Account from "../views/Account.vue";
+import Conversions from "../views/Conversions.vue";
 
 Vue.use(VueRouter);
 
@@ -24,9 +24,9 @@ const routes = [
     component: Registration
   },
   {
-    path: "/account",
-    name: "account",
-    component: Account
+    path: "/conversions",
+    name: "conversions",
+    component: Conversions
   }
 ];
 

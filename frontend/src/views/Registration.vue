@@ -92,12 +92,26 @@
                 <v-col cols="12">
                   <v-container fluid>
                     <v-row>
-                      <v-col cols="12" v-if="requestFinishedNeg">
-                        <v-alert type="error">{{ requestDescription }}</v-alert>
-                      </v-col>
-                      <v-col cols="12" v-if="requestFailed">
-                        <v-alert type="error">{{ requestDescription }}</v-alert>
-                      </v-col>
+                      <v-slide-x-transition>
+                        <v-col
+                          cols="12"
+                          v-if="requestFinishedNeg && requestCode == 30"
+                        >
+                          <v-alert type="error" dismissible>{{
+                            requestDescription
+                          }}</v-alert>
+                        </v-col>
+                      </v-slide-x-transition>
+                      <v-slide-x-transition>
+                        <v-col
+                          cols="12"
+                          v-if="requestFailed && requestCode == 30"
+                        >
+                          <v-alert type="error" dismissible>{{
+                            requestDescription
+                          }}</v-alert>
+                        </v-col>
+                      </v-slide-x-transition>
                       <v-col cols="6">
                         <v-btn
                           block
@@ -204,15 +218,29 @@ export default {
     },
     requestDescription() {
       return this.$store.getters.getRequestDetails.description;
+    },
+    requestCode() {
+      return this.$store.getters.getRequestDetails.code;
     }
   },
   methods: {
     signUp() {
-      this.$store.dispatch("signUp", {
-        email: this.user.email,
-        password: this.user.password,
-        name: `${this.user.name_first} ${this.user.name_last}`
-      });
+      this.$store
+        .dispatch("signUp", {
+          email: this.user.email,
+          password: this.user.password,
+          name: `${this.user.name_first} ${this.user.name_last}`
+        })
+        .then(
+          request => {
+            if (request.finished.pos) {
+              this.$router.push({ path: "/" });
+            }
+          },
+          error => {
+            console.error(error);
+          }
+        );
     }
   }
 };

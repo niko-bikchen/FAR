@@ -46,18 +46,32 @@
                 <v-col cols="12">
                   <v-container fluid>
                     <v-row>
-                      <v-col cols="12" v-if="requestFinishedNeg">
-                        <v-alert type="error">{{ requestDescription }}</v-alert>
-                      </v-col>
-                      <v-col cols="12" v-if="requestFailed">
-                        <v-alert type="error">{{ requestDescription }}</v-alert>
-                      </v-col>
-                      <v-col cols="6">
+                      <v-slide-x-transition>
+                        <v-col
+                          cols="12"
+                          v-if="requestFinishedNeg && requestCode == 20"
+                        >
+                          <v-alert type="error" dismissible>{{
+                            requestDescription
+                          }}</v-alert>
+                        </v-col>
+                      </v-slide-x-transition>
+                      <v-slide-x-transition>
+                        <v-col
+                          cols="12"
+                          v-if="requestFailed && requestCode == 20"
+                        >
+                          <v-alert type="error" dismissible>{{
+                            requestDescription
+                          }}</v-alert>
+                        </v-col>
+                      </v-slide-x-transition>
+                      <v-col lg="6" md="12">
                         <v-btn block color="primary" outlined to="/">
-                          Back
+                          Main Page
                         </v-btn>
                       </v-col>
-                      <v-col cols="6">
+                      <v-col lg="6" md="12">
                         <v-btn
                           block
                           color="primary"
@@ -131,14 +145,28 @@ export default {
     },
     requestDescription() {
       return this.$store.getters.getRequestDetails.description;
+    },
+    requestCode() {
+      return this.$store.getters.getRequestDetails.code;
     }
   },
   methods: {
     signIn() {
-      this.$store.dispatch("signIn", {
-        email: this.user.email,
-        password: this.user.password
-      });
+      this.$store
+        .dispatch("signIn", {
+          email: this.user.email,
+          password: this.user.password
+        })
+        .then(
+          request => {
+            if (request.finished.pos) {
+              this.$router.push({ path: "/" });
+            }
+          },
+          error => {
+            console.error(error);
+          }
+        );
     }
   }
 };

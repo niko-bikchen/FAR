@@ -9,7 +9,7 @@
             arabic: num_sys[0] != 'Roman'
           }"
         >
-          {{ num_sys[0] }}
+          {{ num_sys[0] }} numbers
         </div>
         <v-textarea
           clearable
@@ -31,7 +31,7 @@
             arabic: num_sys[1] == 'Arabic'
           }"
         >
-          {{ num_sys[1] }}
+          {{ num_sys[1] }} numbers
         </div>
         <v-textarea
           auto-grow
@@ -44,8 +44,21 @@
       ></v-col>
     </v-row>
     <v-row>
+      <v-slide-x-transition>
+        <v-col cols="12" v-if="requestFailed && requestCode == 40">
+          <v-alert type="error" dismissible>
+            An error occured while performing conversion.
+          </v-alert>
+        </v-col>
+      </v-slide-x-transition>
       <v-col cols="12">
-        <v-btn block color="primary" @click="convertInput">Convert</v-btn>
+        <v-btn
+          block
+          color="primary"
+          :loading="requestActive"
+          @click="convertInput"
+          >Convert</v-btn
+        >
       </v-col>
       <v-col cols="12">
         <v-btn block color="primary" outlined @click="num_sys.reverse()"
@@ -65,23 +78,62 @@ export default {
       output: ""
     };
   },
+  computed: {
+    requestActive() {
+      return this.$store.getters.getRequestDetails.active;
+    },
+    requestFailed() {
+      return this.$store.getters.getRequestDetails.failed;
+    },
+    requestCode() {
+      return this.$store.getters.getRequestDetails.code;
+    }
+  },
   methods: {
+    todaysDate() {
+      const today = new Date();
+
+      const dd = String(today.getDate()).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+      const yyyy = today.getFullYear();
+
+      return `${dd}/${mm}/${yyyy}`;
+    },
     convertInput() {
-      let sourceTxt = this.input;
-      const numbers = sourceTxt.match(/\d+/gm);
-      let parsedSource = "";
+      if (this.input) {
+        const conversion = {};
+        let sourceTxt = this.input;
+        const numbers = sourceTxt.match(/\d+/gm);
 
-      numbers.forEach(number => {
-        parsedSource += sourceTxt
-          .slice(0, sourceTxt.indexOf(number) + number.length)
-          .replace(number, `<n>${number}</n>`);
+        if (numbers) {
+          let parsedSource = "";
 
-        sourceTxt = sourceTxt.slice(
-          sourceTxt.slice(0, sourceTxt.indexOf(number) + number.length).length
-        );
-      });
+          numbers.forEach(number => {
+            parsedSource += sourceTxt
+              .slice(0, sourceTxt.indexOf(number) + number.length)
+              .replace(number, `<n>${number}</n>`);
 
-      this.output = parsedSource += sourceTxt;
+            sourceTxt = sourceTxt.slice(
+              sourceTxt.slice(0, sourceTxt.indexOf(number) + number.length)
+                .length
+            );
+          });
+
+          conversion.system_in = this.num_sys[0];
+          conversion.system_out = this.num_sys[1];
+          conversion.text_in = parsedSource += sourceTxt;
+          conversion.text_out = "";
+          conversion.date = this.todaysDate();
+
+          this.$store
+            .dispatch("addConversion", Object.assign({}, conversion))
+            .then(response => {
+              this.output = response.data.conversion.text_out;
+            });
+        } else {
+          this.output = "Your input doesn't contain any numbers.";
+        }
+      }
     }
   }
 };

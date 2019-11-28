@@ -1,13 +1,25 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import createPersistedState from "vuex-persistedstate";
+import SecureLS from "secure-ls";
+const ls = new SecureLS({ isCompression: false });
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  plugins: [
+    createPersistedState({
+      storage: {
+        getItem: key => ls.get(key),
+        setItem: (key, value) => ls.set(key, value),
+        removeItem: key => ls.remove(key)
+      }
+    })
+  ],
   state: {
     user: {
-      translations: [],
+      conversions: [],
       webtoken: "",
       email: "",
       name: ""
@@ -16,15 +28,20 @@ export default new Vuex.Store({
       active: false,
       finished: { pos: false, neg: false },
       failed: false,
-      details: ""
+      details: "",
+      code: 0
     }
   },
   mutations: {
-    SET_TRANSLATIONS(state, translations) {
-      state.user.translations = [...translations];
+    SET_CONVERSIONS(state, conversions) {
+      state.user.conversions = [];
+      for (let i = 0; i < Object.keys(conversions).length; i += 1) {
+        conversions[i].fr_id = i;
+        state.user.conversions.push(conversions[i]);
+      }
     },
-    ADD_TRANSLATION(state, translation) {
-      state.user.translations.push(translation);
+    ADD_CONVERSION(state, translation) {
+      state.user.conversions.push(translation);
     },
     SET_WEBTOKEN(state, webtoken) {
       state.user.webtoken = webtoken.slice(0);
@@ -37,70 +54,80 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addTranslation({ commit, getters }, translation) {
+    addConversion({ commit, getters }, conversion) {
       commit("SET_REQUEST_DETAILS", {
         active: true,
         failed: false,
-        finished: {}
+        finished: {},
+        code: 40
       });
 
       return new Promise((resolve, reject) => {
         axios
-          .post("/add-translation", {
-            email: getters.getUserData.email,
-            webtoken: getters.getUserData.webtoken
-          })
+          .post(
+            "/add-conversion",
+            JSON.stringify({
+              email: getters.getUserData.email,
+              conversion
+            })
+          )
           .then(response => {
             if (response.status === 200) {
-              commit("ADD_TRANSLATION", translation);
+              commit("ADD_CONVERSION", conversion);
               commit("SET_REQUEST_DETAILS", {
                 active: false,
-                finished: { pos: true }
+                finished: { pos: true },
+                code: 40
               });
             } else {
               commit("SET_REQUEST_DETAILS", {
                 active: false,
-                finished: { neg: true }
+                finished: { neg: true },
+                code: 40
               });
             }
 
-            resolve(getters.getRequestDetails);
+            resolve(response);
           })
           .catch(error => {
             commit("SET_REQUEST_DETAILS", {
               active: false,
               failed: true,
-              description: "An error occured while converting numbers."
+              description: "An error occured while converting numbers.",
+              code: 40
             });
 
             reject(new Error(error.message));
           });
       });
     },
-    fetchTranslations({ commit, getters }) {
+    fetchConversions({ commit, getters }) {
       commit("SET_REQUEST_DETAILS", {
         active: true,
         false: false,
-        finished: {}
+        finished: {},
+        code: 10
       });
 
       return new Promise((resolve, reject) => {
         axios
-          .post("/get-translations", {
+          .post("/get-conversions", {
             email: getters.getUserData.email,
             webtoken: getters.getUserData.webtoken
           })
           .then(response => {
             if (response.status === 200) {
-              commit("SET_TRANSLATIONS", response.data.translations);
+              commit("SET_CONVERSIONS", response.data.conversions);
               commit("SET_REQUEST_DETAILS", {
                 active: false,
-                finished: { pos: true }
+                finished: { pos: true },
+                code: 10
               });
             } else {
               commit("SET_REQUEST_DETAILS", {
                 active: false,
-                finished: { pos: false }
+                finished: { pos: false },
+                code: 10
               });
             }
 
@@ -111,7 +138,8 @@ export default new Vuex.Store({
               active: false,
               failed: true,
               description:
-                "An error occured while fetching your history of convertiosn from the server."
+                "An error occured while fetching your history of convertiosn from the server.",
+              code: 10
             });
 
             reject(new Error(error.message));
@@ -123,24 +151,26 @@ export default new Vuex.Store({
         active: true,
         failed: false,
         finished: {},
-        description: "Signing user in."
+        description: "Signing user in.",
+        code: 20
       });
 
       return new Promise((resolve, reject) => {
         axios
           .post("/sign-in", userData)
           .then(response => {
-            console.log(response);
             if (response.status === 200) {
               commit("SET_USER", {
                 email: userData.email,
                 name: response.data.name,
-                webtoken: response.data.webtoken
+                webtoken: response.data.webtoken,
+                conversions: []
               });
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { pos: true },
-                description: "User successfuly signed in."
+                description: "User successfuly signed in.",
+                code: 20
               });
 
               resolve(getters.getRequestDetails);
@@ -148,7 +178,8 @@ export default new Vuex.Store({
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { neg: true },
-                description: "You provided invalid credentials."
+                description: "You provided invalid credentials.",
+                code: 20
               });
 
               resolve(getters.getRequestDetails);
@@ -158,7 +189,8 @@ export default new Vuex.Store({
             commit("SET_REQUEST_DETAILS", {
               active: false,
               failed: true,
-              description: "An error occured while signing user in."
+              description: "An error occured while signing user in.",
+              code: 20
             });
 
             reject(new Error(error.message));
@@ -170,7 +202,8 @@ export default new Vuex.Store({
         active: true,
         failed: false,
         finished: {},
-        description: "Signing user up."
+        description: "Signing user up.",
+        code: 30
       });
 
       return new Promise((resolve, reject) => {
@@ -181,12 +214,14 @@ export default new Vuex.Store({
               commit("SET_USER", {
                 email: userData.email,
                 name: userData.name,
-                webtoken: response.data.webtoken
+                webtoken: response.data.webtoken,
+                conversions: []
               });
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { pos: true },
-                description: "User successfuly signed up."
+                description: "User successfuly signed up.",
+                code: 30
               });
 
               resolve(getters.getRequestDetails);
@@ -194,7 +229,8 @@ export default new Vuex.Store({
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { neg: true },
-                description: "User with such email already exists."
+                description: "User with such email already exists.",
+                code: 30
               });
 
               resolve(getters.getRequestDetails);
@@ -204,7 +240,8 @@ export default new Vuex.Store({
             commit("SET_REQUEST_DETAILS", {
               active: false,
               failed: true,
-              description: "An error occured while signing user up."
+              description: "An error occured while signing user up.",
+              code: 30
             });
 
             reject(new Error(error.message));
@@ -212,7 +249,12 @@ export default new Vuex.Store({
       });
     },
     signOut({ commit }) {
-      commit("SET_USER", {});
+      commit("SET_USER", {
+        conversions: [],
+        webtoken: "",
+        email: "",
+        name: ""
+      });
       commit("SET_REQUEST_DETAILS", {
         active: false,
         finished: { pos: false, neg: false },
@@ -225,8 +267,8 @@ export default new Vuex.Store({
     getRequestDetails(state) {
       return Object.assign({}, state.request);
     },
-    getTranslations(state) {
-      return [...state.user.translations];
+    getConversions(state) {
+      return [...state.user.conversions];
     },
     getUserData(state) {
       return { name: state.user.name, email: state.user.email };
