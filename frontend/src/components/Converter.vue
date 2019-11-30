@@ -97,7 +97,7 @@ export default {
       const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
       const yyyy = today.getFullYear();
 
-      return `${dd}/${mm}/${yyyy}`;
+      return `${dd}.${mm}.${yyyy}`;
     },
     convertInput() {
       if (this.input) {
@@ -121,8 +121,8 @@ export default {
 
           conversion.system_in = this.num_sys[0];
           conversion.system_out = this.num_sys[1];
-          conversion.text_in = parsedSource += sourceTxt;
-          conversion.text_out = "";
+          conversion.parsed_text = parsedSource += sourceTxt;
+          conversion.original_text = this.input;
           conversion.date = this.todaysDate();
 
           this.$store

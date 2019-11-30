@@ -73,7 +73,7 @@ export default new Vuex.Store({
           )
           .then(response => {
             if (response.status === 200) {
-              commit("ADD_CONVERSION", conversion);
+              commit("ADD_CONVERSION", response.data.conversion);
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { pos: true },
@@ -157,7 +157,7 @@ export default new Vuex.Store({
 
       return new Promise((resolve, reject) => {
         axios
-          .post("/sign-in", userData)
+          .post("/sign-in", { user: userData })
           .then(response => {
             if (response.status === 200) {
               commit("SET_USER", {
@@ -208,7 +208,7 @@ export default new Vuex.Store({
 
       return new Promise((resolve, reject) => {
         axios
-          .post("/sign-up", userData)
+          .post("/sign-up", { user: userData })
           .then(response => {
             if (response.status === 200) {
               commit("SET_USER", {
