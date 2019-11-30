@@ -5,8 +5,8 @@
         <div
           class="text-center conv-label"
           :class="{
-            roman: num_sys[0] == 'Roman',
-            arabic: num_sys[0] != 'Roman'
+            roman: num_sys[0] === 'Roman',
+            arabic: num_sys[0] !== 'Roman'
           }"
         >
           {{ num_sys[0] }} numbers
@@ -27,8 +27,8 @@
         <div
           class="text-center conv-label"
           :class="{
-            roman: num_sys[1] != 'Arabic',
-            arabic: num_sys[1] == 'Arabic'
+            roman: num_sys[1] !== 'Arabic',
+            arabic: num_sys[1] === 'Arabic'
           }"
         >
           {{ num_sys[1] }} numbers
