@@ -126,7 +126,7 @@ export default {
             );
           });
 
-          const processed_input = (parsedSource += sourceTxt);
+          let processed_input = (parsedSource += sourceTxt);
 
           const system_in = this.num_sys[0];
           const system_out = this.num_sys[1];
