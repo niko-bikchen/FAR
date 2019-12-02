@@ -45,7 +45,10 @@
     </v-row>
     <v-row>
       <v-slide-x-transition>
-        <v-col cols="12" v-if="requestFailed && requestCode == 40">
+        <v-col
+          cols="12"
+          v-if="requestFailed && (requestCode == 40 || requestCode == 100)"
+        >
           <v-alert type="error" dismissible>
             An error occured while performing conversion.
           </v-alert>
@@ -101,9 +104,13 @@ export default {
     },
     convertInput() {
       if (this.input) {
-        const conversion = {};
         let sourceTxt = this.input;
-        const numbers = sourceTxt.match(/\d+/gm);
+        const numbers =
+          this.num_sys[0] === "Arabic"
+            ? sourceTxt.match(/\d+/gm)
+            : sourceTxt.match(
+                /(?=[MDCLXVI])M*(C[MD]|D?C*)(X[CL]|L?X*)(I[XV]|V?I*)/gm
+              );
 
         if (numbers) {
           let parsedSource = "";
@@ -119,16 +126,35 @@ export default {
             );
           });
 
-          conversion.system_in = this.num_sys[0];
-          conversion.system_out = this.num_sys[1];
-          conversion.parsed_text = parsedSource += sourceTxt;
-          conversion.original_text = this.input;
-          conversion.date = this.todaysDate();
+          const processed_input = (parsedSource += sourceTxt);
+
+          const system_in = this.num_sys[0];
+          const system_out = this.num_sys[1];
+          const original_text = this.input;
+          const date = this.todaysDate();
 
           this.$store
-            .dispatch("addConversion", Object.assign({}, conversion))
+            .dispatch("convertFrom", {
+              numbers,
+              source: this.num_sys[0] === "Arabic" ? "arab" : "rome"
+            })
             .then(response => {
-              this.output = response.data.conversion.text_out;
+              const parsed_numbers = response;
+
+              for (let i = 0; i < parsed_numbers.length; i += 1) {
+                processed_input = processed_input.replace(
+                  `<n>${numbers[i]}</n>`,
+                  parsed_numbers[i]
+                );
+              }
+
+              this.$store.dispatch("addConversion", {
+                date,
+                system_in,
+                system_out,
+                text_in: original_text,
+                text_out: processed_input
+              });
             });
         } else {
           this.output = "Your input doesn't contain any numbers.";
