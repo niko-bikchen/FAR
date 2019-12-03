@@ -13,12 +13,7 @@ const conversions = {
 
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            `/from_${source}`,
-            JSON.stringify({
-              numbers
-            })
-          )
+          .post(`/from_${source}`, numbers)
           .then(response => {
             if (response.status === 200) {
               commit("SET_REQUEST_DETAILS", {
@@ -61,16 +56,17 @@ const conversions = {
         code: 40
       });
 
+      console.log(conversion);
+
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            "/translate",
-            JSON.stringify({
-              webToken: getters.getWebTokenBundle.webtoken,
-              converter: conversion
-            })
-          )
+          .post("/translate", {
+            webToken: getters.getWebTokenBundle.webtoken,
+            converter: conversion
+          })
           .then(response => {
+            console.log(response);
+
             if (response.status === 200) {
               commit("ADD_CONVERSION", response.data.conversion);
               commit("SET_REQUEST_DETAILS", {
@@ -119,7 +115,7 @@ const conversions = {
           })
           .then(response => {
             if (response.status === 200) {
-              commit("SET_CONVERSIONS", response.data.conversions);
+              commit("SET_CONVERSIONS", response.data);
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { pos: true },

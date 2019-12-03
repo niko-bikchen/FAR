@@ -54,9 +54,11 @@ export default new Vuex.Store({
     },
     SET_CONVERSIONS(state, conversions) {
       state.user.conversions = [];
-      for (let i = 0; i < Object.keys(conversions).length; i += 1) {
-        conversions[i].fr_id = i;
-        state.user.conversions.push(conversions[i]);
+      if (conversions) {
+        for (let i = 0; i < conversions.length; i += 1) {
+          conversions[i].fr_id = i;
+          state.user.conversions.push(conversions[i]);
+        }
       }
     },
     ADD_CONVERSION(state, translation) {

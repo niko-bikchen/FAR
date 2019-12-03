@@ -148,9 +148,6 @@ export default {
 
           let processed_input = (parsedSource += sourceTxt);
 
-          console.log(numbers);
-          console.log(processed_input);
-
           const system_in = this.num_sys[0];
           const system_out = this.num_sys[1];
           const original_text = this.input;
@@ -174,12 +171,14 @@ export default {
               this.output = processed_input;
 
               if (this.$store.getters.getLoginStatus) {
+                console.log("LOL");
                 this.$store.dispatch("addConversion", {
                   date,
                   system_in,
                   system_out,
                   text_in: original_text,
-                  text_out: processed_input
+                  text_out: processed_input,
+                  email: this.$store.getters.getUserData.email
                 });
               }
             });
