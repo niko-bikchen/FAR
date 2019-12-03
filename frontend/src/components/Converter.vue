@@ -171,15 +171,17 @@ export default {
                 );
               }
 
-              this.$store
-                .dispatch("addConversion", {
+              this.output = processed_input;
+
+              if (this.$store.getters.getLoginStatus) {
+                this.$store.dispatch("addConversion", {
                   date,
                   system_in,
                   system_out,
                   text_in: original_text,
                   text_out: processed_input
-                })
-                .then(() => (this.output = processed_input));
+                });
+              }
             });
         } else {
           this.output = "Your input doesn't contain any numbers.";

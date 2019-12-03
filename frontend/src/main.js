@@ -8,8 +8,7 @@ import "@babel/polyfill";
 import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 
-axios.defaults.baseURL =
-  "https://6b87a82e-7b4b-4db4-8e8c-ead12ee941af.mock.pstmn.io";
+axios.defaults.baseURL = "http://localhost:8080";
 
 Vue.config.productionTip = false;
 

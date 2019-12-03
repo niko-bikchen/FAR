@@ -28,7 +28,7 @@ const conversions = {
                 code: 100
               });
 
-              resolve(response.data.numbers);
+              resolve(response.data);
             } else {
               commit("SET_REQUEST_DETAILS", {
                 active: false,

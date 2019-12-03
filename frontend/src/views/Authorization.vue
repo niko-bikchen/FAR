@@ -157,18 +157,13 @@ export default {
           email: this.user.email,
           password: this.user.password
         })
-        .then(
-          request => {
-            if (request.finished.pos) {
-              this.$router.push({ path: "/" });
+        .then(request => {
+          if (request.finished.pos) {
+            this.$router.push({ path: "/" });
 
-              this.refreshToken();
-            }
-          },
-          error => {
-            console.error(error);
+            this.refreshToken();
           }
-        );
+        });
     },
     refreshToken() {
       setTimeout(() => {

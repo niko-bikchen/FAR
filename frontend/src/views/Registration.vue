@@ -231,18 +231,13 @@ export default {
           password: this.user.password,
           name: `${this.user.name_first} ${this.user.name_last}`
         })
-        .then(
-          request => {
-            if (request.finished.pos) {
-              this.$router.push({ path: "/" });
+        .then(request => {
+          if (request.finished.pos) {
+            this.$router.push({ path: "/" });
 
-              this.refreshToken();
-            }
-          },
-          error => {
-            console.error(error);
+            this.refreshToken();
           }
-        );
+        });
     },
     refreshToken() {
       setTimeout(() => {

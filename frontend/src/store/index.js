@@ -68,6 +68,7 @@ export default new Vuex.Store({
       commit("SET_USER", {
         conversions: [],
         webtoken: "",
+        refresh_token: "",
         email: "",
         name: ""
       });
