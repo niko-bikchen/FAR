@@ -20,7 +20,7 @@ const registration = {
                 email: userData.email,
                 name: userData.name,
                 webtoken: response.data.webtoken,
-                refresh_token: response.data.refresh_token,
+                refresh_token: response.data.refreshToken,
                 conversions: []
               });
               commit("SET_REQUEST_DETAILS", {

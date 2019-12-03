@@ -1,24 +1,13 @@
 import axios from "axios";
 
 const conversions = {
-  mutations: {
-    SET_CONVERSIONS(state, conversions, rootState) {
-      rootState.user.conversions = [];
-      for (let i = 0; i < Object.keys(conversions).length; i += 1) {
-        conversions[i].fr_id = i;
-        rootState.user.conversions.push(conversions[i]);
-      }
-    },
-    ADD_CONVERSION(state, translation, rootState) {
-      rootState.user.conversions.push(translation);
-    }
-  },
   actions: {
     convertFrom({ commit }, { numbers, source }) {
       commit("SET_REQUEST_DETAILS", {
         active: true,
         failed: false,
         finished: {},
+        description: "Converting user input",
         code: 100
       });
 
@@ -68,6 +57,7 @@ const conversions = {
         active: true,
         failed: false,
         finished: {},
+        description: "Saving conversion to user account",
         code: 40
       });
 
@@ -118,6 +108,7 @@ const conversions = {
         active: true,
         false: false,
         finished: {},
+        description: "Fetching conversions from the server.",
         code: 10
       });
 
@@ -132,7 +123,7 @@ const conversions = {
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { pos: true },
-                description: "Conversion successfuly saved",
+                description: "Conversion successfuly fetched",
                 code: 10
               });
             } else {
@@ -158,11 +149,6 @@ const conversions = {
             reject(new Error(error.message));
           });
       });
-    }
-  },
-  getters: {
-    getConversions(state) {
-      return [...state.user.conversions];
     }
   }
 };

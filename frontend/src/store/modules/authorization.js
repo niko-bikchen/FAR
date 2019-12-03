@@ -13,13 +13,14 @@ const authorization = {
 
       return new Promise((resolve, reject) => {
         axios
-          .post("/sign-in", { user: userData })
+          .post("/sign-in", userData)
           .then(response => {
             if (response.status === 200) {
               commit("SET_USER", {
                 email: userData.email,
                 name: response.data.name,
-                webtoken: response.data.webtoken,
+                webtoken: response.data.webToken,
+                refresh_token: response.data.refreshToken,
                 conversions: []
               });
               commit("SET_REQUEST_DETAILS", {

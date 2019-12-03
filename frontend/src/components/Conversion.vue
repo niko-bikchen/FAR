@@ -1,5 +1,5 @@
 <template>
-  <v-card class="conversion">
+  <v-card class="conversion" v-if="conversion_data">
     <v-card-title>
       {{ conversion_data.system_in }}
       <v-icon>mdi-arrow-right</v-icon>

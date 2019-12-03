@@ -235,12 +235,20 @@ export default {
           request => {
             if (request.finished.pos) {
               this.$router.push({ path: "/" });
+
+              this.refreshToken();
             }
           },
           error => {
             console.error(error);
           }
         );
+    },
+    refreshToken() {
+      setTimeout(() => {
+        this.$store.dispatch("refreshToken");
+        this.refreshToken();
+      }, 80000000);
     }
   }
 };

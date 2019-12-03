@@ -54,6 +54,23 @@
           </v-alert>
         </v-col>
       </v-slide-x-transition>
+      <v-slide-x-transition>
+        <v-col cols="12" v-if="requestStatus.finished.neg && requestCode == 40">
+          <v-alert type="error" dismissible>
+            {{ requestStatus.descripton }}
+          </v-alert>
+        </v-col>
+      </v-slide-x-transition>
+      <v-slide-x-transition>
+        <v-col
+          cols="12"
+          v-if="requestStatus.finished.neg && requestCode == 100"
+        >
+          <v-alert type="error" dismissible>
+            {{ requestStatus.descripton }}
+          </v-alert>
+        </v-col>
+      </v-slide-x-transition>
       <v-col cols="12">
         <v-btn
           block
@@ -90,6 +107,9 @@ export default {
     },
     requestCode() {
       return this.$store.getters.getRequestDetails.code;
+    },
+    requestStatus() {
+      return this.$store.getters.getRequestDetails;
     }
   },
   methods: {
@@ -128,6 +148,9 @@ export default {
 
           let processed_input = (parsedSource += sourceTxt);
 
+          console.log(numbers);
+          console.log(processed_input);
+
           const system_in = this.num_sys[0];
           const system_out = this.num_sys[1];
           const original_text = this.input;
@@ -148,13 +171,15 @@ export default {
                 );
               }
 
-              this.$store.dispatch("addConversion", {
-                date,
-                system_in,
-                system_out,
-                text_in: original_text,
-                text_out: processed_input
-              });
+              this.$store
+                .dispatch("addConversion", {
+                  date,
+                  system_in,
+                  system_out,
+                  text_in: original_text,
+                  text_out: processed_input
+                })
+                .then(() => (this.output = processed_input));
             });
         } else {
           this.output = "Your input doesn't contain any numbers.";
