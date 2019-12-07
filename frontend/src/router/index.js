@@ -27,6 +27,10 @@ const routes = [
     path: "/conversions",
     name: "conversions",
     component: Conversions
+  },
+  {
+    path: "*",
+    redirect: "/"
   }
 ];
 

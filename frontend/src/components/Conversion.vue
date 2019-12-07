@@ -26,6 +26,18 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="error" class="mr-2" @click="deleteConversion">
+        Delete
+      </v-btn>
+    </v-card-actions>
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      {{ text }}
+      <v-btn color="blue" text @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -33,6 +45,9 @@
 export default {
   data() {
     return {
+      snackbar: false,
+      timeout: 2000,
+      text: "",
       open: [0]
     };
   },
@@ -40,6 +55,16 @@ export default {
     conversion_data: {
       type: Object,
       requied: true
+    }
+  },
+  methods: {
+    deleteConversion() {
+      this.$store
+        .dispatch("removeConversion", this.conversion_data.id)
+        .then(response => {
+          this.snackbar = true;
+          this.text = response.details;
+        });
     }
   }
 };

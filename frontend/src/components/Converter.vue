@@ -125,6 +125,8 @@ export default {
     convertInput() {
       if (this.input) {
         let sourceTxt = this.input;
+        sourceTxt = sourceTxt.replace(/(<n><\/n>|<n>|<\/n>)/gm, "");
+
         const numbers =
           this.num_sys[0] === "Arabic"
             ? sourceTxt.match(/\d+/gm)
@@ -171,7 +173,6 @@ export default {
               this.output = processed_input;
 
               if (this.$store.getters.getLoginStatus) {
-                console.log("LOL");
                 this.$store.dispatch("addConversion", {
                   date,
                   system_in,

@@ -56,8 +56,6 @@ const conversions = {
         code: 40
       });
 
-      console.log(conversion);
-
       return new Promise((resolve, reject) => {
         axios
           .post("/translate", {
@@ -65,10 +63,8 @@ const conversions = {
             converter: conversion
           })
           .then(response => {
-            console.log(response);
-
             if (response.status === 200) {
-              commit("ADD_CONVERSION", response.data.conversion);
+              commit("ADD_CONVERSION", response.data);
               commit("SET_REQUEST_DETAILS", {
                 active: false,
                 finished: { pos: true },
@@ -93,6 +89,55 @@ const conversions = {
               description:
                 "An error occured while sending conversion to the server.",
               code: 40
+            });
+
+            reject(new Error(error.message));
+          });
+      });
+    },
+    removeConversion({ commit, getters }, id) {
+      commit("SET_REQUEST_DETAILS", {
+        active: true,
+        failed: false,
+        finished: {},
+        description: "Removing conversion.",
+        code: 150
+      });
+
+      return new Promise((resolve, reject) => {
+        axios
+          .post("/deleteTrans", {
+            webToken: getters.getWebTokenBundle.webtoken,
+            converter: {
+              id
+            }
+          })
+          .then(response => {
+            if (response.status === 200) {
+              commit("REMOVE_CONVERSION", id);
+              commit("SET_REQUEST_DETAILS", {
+                active: false,
+                finished: { pos: true },
+                description: "Conversion successfuly deleted.",
+                code: 150
+              });
+            } else {
+              commit("SET_REQUEST_DETAILS", {
+                active: false,
+                finished: { neg: true },
+                description: "Cannot delete conversion.",
+                code: 150
+              });
+            }
+
+            resolve(response);
+          })
+          .catch(error => {
+            commit("SET_REQUEST_DETAILS", {
+              active: false,
+              failed: true,
+              description: "An error occured while deleting the conversion.",
+              code: 150
             });
 
             reject(new Error(error.message));

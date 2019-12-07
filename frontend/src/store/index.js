@@ -56,13 +56,17 @@ export default new Vuex.Store({
       state.user.conversions = [];
       if (conversions) {
         for (let i = 0; i < conversions.length; i += 1) {
-          conversions[i].fr_id = i;
           state.user.conversions.push(conversions[i]);
         }
       }
     },
     ADD_CONVERSION(state, translation) {
       state.user.conversions.push(translation);
+    },
+    REMOVE_CONVERSION(state, id) {
+      state.user.conversions = state.user.conversions.filter(item => {
+        return item.id !== id;
+      });
     }
   },
   actions: {
