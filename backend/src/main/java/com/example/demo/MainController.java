@@ -47,7 +47,7 @@ public class MainController {
         try {
             u = userRepository.findByEmail(decodeJWT(request.getWebToken()).getIssuer());
         }catch(Exception e){
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<User>(HttpStatus.ACCEPTED);
         }
         if(u!=null && u.getWebToken().equals(request.getWebToken())) {
             //if the user was found we delete a translation from history
@@ -56,7 +56,7 @@ public class MainController {
             response.setWebToken(u.getWebToken());
             return new ResponseEntity<User>(response, HttpStatus.OK);
         }else{
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<User>(HttpStatus.ACCEPTED);
         }
 
     }
@@ -70,7 +70,7 @@ public class MainController {
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         //checking if the entered email is uniq
         if(userRepository.findByEmail(user.getEmail())!=null){
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<User>(HttpStatus.ACCEPTED);
         }else{
             //if so, diving him tokens and saving them to the bd
             user.setRefreshToken(createJWT(user,999999999));
@@ -113,7 +113,7 @@ public class MainController {
             return new ResponseEntity<User>(response,HttpStatus.OK);
 
         }else{
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<User>(HttpStatus.ACCEPTED);
         }
 
     }
@@ -135,7 +135,7 @@ public class MainController {
                 ar.forEach((n)->n.setEmail(null));
 
             }catch(Exception e){
-                return new ResponseEntity<ArrayList<Converter>>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<ArrayList<Converter>>(HttpStatus.ACCEPTED);
             }
 
             return new ResponseEntity<ArrayList<Converter>>(ar, HttpStatus.OK);
@@ -153,7 +153,7 @@ public class MainController {
         try {
             u = userRepository.findByEmail(decodeJWT(user.getRefreshToken()).getIssuer());
         }catch(Exception e){
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<User>(HttpStatus.ACCEPTED);
         }
         if(u!=null && u.getWebToken().equals(user.getWebToken())) {
 
@@ -166,7 +166,7 @@ public class MainController {
 
             return new ResponseEntity<User>(response, HttpStatus.OK);
         }else{
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<User>(HttpStatus.ACCEPTED);
         }
 
     }
@@ -183,7 +183,7 @@ public class MainController {
         try{
             u=userRepository.findByEmail(decodeJWT(request.getWebToken()).getIssuer());
         }catch(Exception e){
-            return new ResponseEntity<Converter>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Converter>(HttpStatus.ACCEPTED);
         }
         if(u!=null){
             //if the user is found adding the translation into bd
@@ -195,7 +195,7 @@ public class MainController {
             converterRepository.save(conv);
             return new ResponseEntity<Converter>(request.getConverter(), HttpStatus.OK);
         }else{
-           return new ResponseEntity<Converter>(HttpStatus.BAD_REQUEST);
+           return new ResponseEntity<Converter>(HttpStatus.ACCEPTED);
         }
     }
 
